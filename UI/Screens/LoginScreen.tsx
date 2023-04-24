@@ -54,7 +54,7 @@ export default function LoginScreen() {
               marginVertical: 5,
               fontFamily: 'Charmonman-Regular',
             }}>
-            {/* Hello, welcome back to our Tchat app */}
+            Hello, welcome back to our Tchat app
           </Text>
         </View>
         <View>
