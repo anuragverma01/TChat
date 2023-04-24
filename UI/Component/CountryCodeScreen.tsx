@@ -2,10 +2,12 @@ import React, {useState, useRef} from 'react';
 import {View, Text, Alert, StyleSheet, Pressable} from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import {useNavigation} from '@react-navigation/native';
-
+import {sendSmsVerification} from '../../Api/Verify';
 const CountryCodeScreen = () => {
   const [phoneNumber, setphoneNumber] = useState('');
-  const phoneInput = useRef(null);
+  const phoneInput = useRef<PhoneInput>(null);
+  const [formattedValue, setFormattedValue] = useState('');
+
   // const buttonPress = () => {
   //   Alert.alert(phoneNumber);
   // };
@@ -25,8 +27,18 @@ const CountryCodeScreen = () => {
         onChangeFormattedText={text => {
           setphoneNumber(text);
         }}
+        onChangeFormattedText={text => {
+          setFormattedValue(text);
+        }}
       />
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Otp')}>
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          sendSmsVerification(formattedValue).then((sent) => {
+            navigation.navigate("Otp", { phoneNumber: formattedValue });
+          });
+          
+        }}>
         <Text style={styles.continueText}>GET OTP</Text>
       </Pressable>
     </View>

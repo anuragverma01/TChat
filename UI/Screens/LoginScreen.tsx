@@ -82,7 +82,7 @@ export default function LoginScreen() {
                 textAlign: 'center',
                 alignSelf: 'center',
                 paddingHorizontal: 90,
-                fontStyle:'italic'
+                fontStyle: 'italic',
               }}>
               We will send you One time Code on your phone number
             </Text>

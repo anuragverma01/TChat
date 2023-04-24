@@ -7,19 +7,24 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import {useState} from 'react';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {useFocusEffect} from '@react-navigation/native';
+import {checkVerification} from '../../Api/Verify';
 import {useCallback} from 'react';
 import gif from '../../Assets/Images/phone.gif';
 import Logo from '../../Assets/Images/TChat.png';
 import Otp from '../../Assets/Images/Otp.gif';
-import { useNavigation } from '@react-navigation/native';
+import OTPInputView from '@twotalltotems/react-native-otp-input';
+import {useNavigation} from '@react-navigation/native';
 export default function OtpVerifyScreen() {
   const insets = useSafeAreaInsets();
+  // const {phoneNumber} = route.params;
+  const [invalidCode, setInvalidCode] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       StatusBar.setBarStyle('dark-content');
@@ -96,20 +101,27 @@ export default function OtpVerifyScreen() {
             </Text>
           </View>
 
-          <View style={{marginVertical: 50}}>
-            <TextInput
-              inputMode="numeric"
-              maxLength={4}
-              keyboardType="number-pad"
-              //   secureTextEntry={true}
-              style={styles.Box}></TextInput>
-            <Pressable style={styles.button}>
-              <Text style={styles.continueText}>Verify</Text>
-            </Pressable>
+          <View style={{marginVertical: 0}}>
+            <OTPInputView
+              style={{width: '80%', height: 200}}
+              pinCount={4}
+              autoFocusOnLoad
+              //  codeInputFieldStyle={styles.underlineStyleBase}
+              //  codeInputHighlightStyle={styles.underlineStyleHighLighted}
+              onCodeFilled={code => {
+                checkVerification(code).then(success => {
+                  if (!success) setInvalidCode(true);
+                  success && navigation.replace('Gated');
+                });
+              }}
+            />
+            {invalidCode && <Text style={styles.error}>Incorrect code.</Text>}
           </View>
           <View style={{flexDirection: 'row', alignSelf: 'center'}}>
             <Text>Didn't receive the Verification OTP ?</Text>
-            <Text onPress={()=> navigation.replace('Login')} style={{color: '#581c94', fontWeight: '500'}}>
+            <Text
+              onPress={() => navigation.replace('Login')}
+              style={{color: '#581c94', fontWeight: '500'}}>
               Resend Again
             </Text>
           </View>
@@ -153,5 +165,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     color: '#8a8986',
+  },
+
+  underlineStyleBase: {
+    width: 30,
+    height: 45,
+    borderWidth: 0,
+    borderBottomWidth: 1,
+    color: 'black',
+    fontSize: 20,
+  },
+
+  underlineStyleHighLighted: {
+    borderColor: '#03DAC6',
+  },
+  error: {
+    color: 'red',
   },
 });
